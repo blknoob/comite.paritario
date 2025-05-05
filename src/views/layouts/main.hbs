@@ -1,31 +1,38 @@
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Comité Paritario</title>
-    <link rel="stylesheet" href="/css/styles.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comité Paritario DPC Lo Espejo</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/images/icon-192.png" type="image/png" />
+  <meta name="theme-color" content="#0d6474" />
+  
+  <!-- Apple -->
+  <link rel="apple-touch-icon" href="/images/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+</head>
+
   <body>
 
-   <nav class="navbar">
-  <div class="navbar-container">
-    <div class="navbar-title">
-      <div class="titulo">Comité Paritario</div>
-      <div class="subtitulo">DPC Lo Espejo</div>
-    </div>
-    <div class="navbar-links">
-      <a href="/">Inicio</a>
-      <a href="/form">Reclamos o Sugerencias</a>
-      <a href="/seguimiento">Seguimiento</a>
-      {{#if session.isAdmin}}
-        <a href="/logout">Cerrar sesión</a>
-      {{else}}
-        <a href="/login">Panel Administración - Login</a>
-      {{/if}}
-    </div>
-  </div>
-</nav>
-
+    <nav class="navbar">
+      <div class="navbar-container">
+        <div class="navbar-title">
+          <div class="titulo">Comité Paritario</div>
+          <div class="subtitulo">DPC Lo Espejo</div>
+        </div>
+        <div class="navbar-links">
+          <a href="/">Inicio</a>
+          <a href="/form">Reclamos o Sugerencias</a>
+          <a href="/seguimiento">Seguimiento</a>
+          {{#if session.isAdmin}}
+            <a href="/logout">Cerrar sesión</a>
+          {{else}}
+            <a href="/login">Panel Administración - Login</a>
+          {{/if}}
+        </div>
+      </div>
+    </nav>
 
     <main>
       {{{body}}}
