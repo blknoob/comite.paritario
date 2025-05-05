@@ -1,0 +1,66 @@
+<section class="container">
+  <h2 class="titulo-principal">Seguimiento de Reclamos</h2>
+  <div class="tabla-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>Mensaje</th>
+          <th>Imagen</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Comentario</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if lista.docs.length}}
+          {{#each lista.docs}}
+            <tr>
+              <td>{{this.numero}}</td>
+              <td>{{this.mensaje}}</td>
+              <td>
+                {{#if this.imagenes.length}}
+                  <a href="/seguimiento/imagenes/{{this._id}}">
+                    Ver imágenes ({{this.imagenes.length}})
+                  </a>
+                {{else}}
+                  Sin imágenes
+                {{/if}}
+              </td>
+              <td>{{this.createdAtFormatted}}</td>
+              <td>{{this.estado}}</td>
+              <td>
+                {{#if this.comentarioSolucion}}
+                  {{this.comentarioSolucion}}
+                {{else}}
+                  Sin comentario
+                {{/if}}
+              </td>
+            </tr>
+          {{/each}}
+        {{else}}
+          <tr>
+            <td colspan="6">No hay reclamos registrados.</td>
+          </tr>
+        {{/if}}
+      </tbody>
+    </table>
+  </div>
+
+  <br />
+
+  <div>
+    {{#if lista.hasPrevPage}}
+      <a href="/seguimiento?page={{lista.prevPage}}">⬅️ Anterior</a>
+    {{/if}}
+
+    Página
+    {{lista.page}}
+    de
+    {{lista.totalPages}}
+
+    {{#if lista.hasNextPage}}
+      <a href="/seguimiento?page={{lista.nextPage}}">Siguiente ➡️</a>
+    {{/if}}
+  </div>
+</section>
