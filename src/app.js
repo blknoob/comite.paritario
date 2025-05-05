@@ -16,10 +16,20 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, "../public")));
 
+// Configuración de session con connect-mongo
 app.use(session({
-  secret: 'super',
+  secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URI,
+    ttl: 14 * 24 * 60 * 60, // Tiempo de vida: 14 días
+  }),
+  cookie: {
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 días en ms
+    secure: false, // pon true si usas HTTPS
+    httpOnly: true,
+  },
 }));
 
 
