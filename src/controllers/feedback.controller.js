@@ -3,6 +3,12 @@ const feedbackManager = new FeedbackManager();
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("../models/cloudinary.js");
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
@@ -47,19 +53,19 @@ const showAdmin = async (req, res) => {
 
     const offset = (page - 1) * 10;
     lista.docs = lista.docs.map((item, index) => ({
-      _id: item._id,  // ✅ importante
+      _id: item._id,
       numero: offset + index + 1,
       nombre: item.nombre,
       tipo: item.tipo,
       mensaje: item.mensaje,
-      imagenes: item.imagenes && item.imagenes.length ? item.imagenes : [],  // ✅ asegura array
+      imagenes: item.imagenes && item.imagenes.length ? item.imagenes : [],
       estado: item.estado,
       comentarioSolucion: item.comentarioSolucion,
-      createdAt: item.createdAt.toLocaleString("es-CL", {
-        dateStyle: "short",
-        timeStyle: "short",
-      }),
+      createdAt: dayjs(item.createdAt)
+        .tz('America/Santiago')
+        .format('DD-MM-YY, h:mm a'),
     }));
+    
 
     res.render("admin", { lista });
   } catch (err) {
@@ -74,17 +80,17 @@ const showSeguimiento = async (req, res) => {
 
     const offset = (page - 1) * 10;
     lista.docs = lista.docs.map((item, index) => ({
-      _id: item._id,  // ✅ importante
+      _id: item._id,
       numero: offset + index + 1,
       mensaje: item.mensaje,
-      imagenes: item.imagenes && item.imagenes.length ? item.imagenes : [],  // ✅ asegura array
+      imagenes: item.imagenes && item.imagenes.length ? item.imagenes : [],
       estado: item.estado,
       comentarioSolucion: item.comentarioSolucion,
-      createdAtFormatted: item.createdAt.toLocaleString("es-CL", {
-        dateStyle: "short",
-        timeStyle: "short",
-      }),
+      createdAtFormatted: dayjs(item.createdAt)
+        .tz('America/Santiago')
+        .format('DD-MM-YY, h:mm a'),
     }));
+    
 
     res.render("seguimiento", { lista });
   } catch (err) {
