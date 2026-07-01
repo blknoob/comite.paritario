@@ -1,0 +1,192 @@
+<h2 class="titulo-principal">Panel de Administración</h2>
+
+<a href="/uploads/cphs.st02.xlsx" download>
+  📄 Descargar Plan de Trabajo CPHS
+</a>
+
+<div class="tabla-responsive">
+  <table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+      <tr>
+        <th>N°</th>
+        <th>Nombre</th>
+        <th>Tipo</th>
+        <th>Mensaje</th>
+        <th>Imagen</th>
+        <th>Fecha</th>
+        <th>Estado</th>
+        <th>Comentario Solución</th>
+        <th>Imagen de Seguimiento</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each lista.docs}}
+        <tr>
+          <td>{{this.numero}}</td>
+          <td>{{this.nombre}}</td>
+          <td>{{this.tipo}}</td>
+          <td>{{this.mensaje}}</td>
+          <td>
+  {{#if this.imagenes.length}}
+    <a href="/admin/imagenes/{{this._id}}">Ver imágenes ({{this.imagenes.length}})</a>
+  {{else}}
+    Sin imágenes
+  {{/if}}
+</td>
+
+          <td>{{this.createdAt}}</td>
+
+          <!-- Celda Estado -->
+          <td>
+            <form action="/admin/actualizar/{{this._id}}" method="POST" class="form-actualizar">
+              <select name="estado" required>
+                <option value="Pendiente" {{#ifEquals this.estado "Pendiente"}}selected{{/ifEquals}}>Pendiente</option>
+                <option value="En Proceso" {{#ifEquals this.estado "En Proceso"}}selected{{/ifEquals}}>En Proceso</option>
+                <option value="Resuelto" {{#ifEquals this.estado "Resuelto"}}selected{{/ifEquals}}>Resuelto</option>
+              </select>
+          </td>
+
+          <!-- Celda Comentario -->
+          <td>
+  <textarea name="comentarioSolucion"
+            placeholder="Comentario de solución"
+            class="comentario-box">{{this.comentarioSolucion}}</textarea>
+</td>
+
+          <!-- Celda Imagen de Seguimiento -->
+
+         <td>
+  {{#if this.seguimientoImagen}}
+    <a href="{{this.seguimientoImagen}}" target="_blank">
+  <img src="{{this.seguimientoImagen}}" alt="Seguimiento" width="70" style="display:block; margin-bottom:5px;" />
+  Ver imagen de seguimiento
+</a>
+
+  {{else}}
+    <form action="/admin/seguimiento/{{this._id}}" method="POST" enctype="multipart/form-data" id="form-seguimiento-{{this._id}}">
+  <input 
+    type="file" 
+    name="imagen" 
+    accept="image/*" 
+    id="input-{{this._id}}"
+    style="display: none;" 
+  />
+
+  <button type="button" onclick="abrirCamara('{{this._id}}')">📸 Tomar Foto</button>
+  <button type="button" onclick="abrirGaleria('{{this._id}}')">🖼️ Galería</button>
+</form>
+
+  {{/if}}
+</td>
+
+
+
+
+          <!-- Celda Acciones -->
+          <td>
+              <button class="act" type="submit">Actualizar</button>
+            </form>
+          <form action="/admin/eliminar/{{this._id}}" method="POST" class="form-eliminar" data-nombre="{{this.nombre}}" style="margin-top: 5px;">
+    <button type="submit">Eliminar</button>
+  </form>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+<br />
+
+<div style="text-align: center;">
+  {{#if lista.hasPrevPage}}
+    <a href="/admin?page={{lista.prevPage}}">⬅️ Anterior</a>
+  {{/if}}
+
+  Página {{lista.page}} de {{lista.totalPages}}
+
+  {{#if lista.hasNextPage}}
+    <a href="/admin?page={{lista.nextPage}}">Siguiente ➡️</a>
+  {{/if}}
+</div>
+<script>
+  // Confirmación al eliminar
+  document.querySelectorAll('.form-eliminar').forEach(form => {
+    const nombre = form.dataset.nombre;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      Swal.fire({
+        title: `¿Eliminar reclamo/sugerencia realizado por "${nombre}"?`,
+        text: 'Esta acción lo eliminará permanentemente.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e74c3c',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit();
+        }
+      });
+    });
+  });
+
+  // Alerta de éxito al actualizar
+  document.querySelectorAll('.form-actualizar').forEach(form => {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      Swal.fire({
+        title: 'Actualizado',
+        text: 'El comentario ha sido actualizado correctamente.',
+        icon: 'success',
+        timer: 3000,
+        showConfirmButton: false,
+        timerProgressBar: true
+      }).then(() => {
+        form.submit();
+      });
+    });
+  });
+
+  // Funciones para tomar o subir imagen de seguimiento
+  function abrirCamara(id) {
+    const input = document.getElementById(`input-${id}`);
+    const form = document.getElementById(`form-seguimiento-${id}`);
+
+    if (input && form) {
+      input.setAttribute("capture", "environment");
+      input.onchange = () => {
+        if (input.files.length > 0) {
+          form.submit();
+        }
+      };
+      input.click();
+    } else {
+      console.warn("Formulario o input no encontrado para ID:", id);
+    }
+  }
+
+  function abrirGaleria(id) {
+    const input = document.getElementById(`input-${id}`);
+    const form = document.getElementById(`form-seguimiento-${id}`);
+
+    if (input && form) {
+      input.removeAttribute("capture");
+      input.onchange = () => {
+        if (input.files.length > 0) {
+          form.submit();
+        }
+      };
+      input.click();
+    } else {
+      console.warn("Formulario o input no encontrado para ID:", id);
+    }
+  }
+</script>
+
+

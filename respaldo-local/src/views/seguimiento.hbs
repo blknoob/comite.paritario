@@ -1,0 +1,69 @@
+<section class="container">
+  <h2 class="titulo-principal">Seguimiento de Reclamos</h2>
+  <div class="tabla-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>Nº</th>
+          <th>Mensaje</th>
+          <th>Imagen</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Comentario</th>
+          <th>Seguimiento</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#if lista.docs.length}}
+          {{#each lista.docs}}
+            <tr>
+              <td>{{this.numero}}</td>
+              <td>{{this.mensaje}}</td>
+              <td>
+                {{#if this.imagenes.length}}
+                  <a href="/seguimiento/imagenes/{{this._id}}">
+                    Ver imágenes ({{this.imagenes.length}})
+                  </a>
+                {{else}}
+                  Sin imágenes
+                {{/if}}
+              </td>
+              <td>{{this.createdAtFormatted}}</td>
+              <td>{{this.estado}}</td>
+              <td>
+                {{#if this.comentarioSolucion}}
+                  {{this.comentarioSolucion}}
+                {{else}}
+                  Sin comentario
+                {{/if}}
+              </td>
+              <td>
+                {{#if this.seguimientoImagen}}
+                  <img src="{{this.seguimientoImagen}}" alt="Seguimiento" width="70" />
+                {{else}}
+                  Sin seguimiento
+                {{/if}}
+              </td>
+            </tr>
+          {{/each}}
+        {{else}}
+          <tr>
+            <td colspan="7">No hay reclamos registrados.</td>
+          </tr>
+        {{/if}}
+      </tbody>
+    </table>
+  </div>
+
+  <br />
+
+  <div>
+    {{#if lista.hasPrevPage}}
+      <a href="/seguimiento?page={{lista.prevPage}}">⬅️ Anterior</a>
+    {{/if}}
+    Página {{lista.page}} de {{lista.totalPages}}
+    {{#if lista.hasNextPage}}
+      <a href="/seguimiento?page={{lista.nextPage}}">Siguiente ➡️</a>
+    {{/if}}
+  </div>
+</section>

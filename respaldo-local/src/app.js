@@ -24,11 +24,11 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URI,
-    ttl: 14 * 24 * 60 * 60, 
+    ttl: 14 * 24 * 60 * 60, // Tiempo de vida: 14 días
   }),
   cookie: {
-    maxAge: 14 * 24 * 60 * 60 * 1000, 
-    secure: false, 
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 días en ms
+    secure: false, // pon true si usas HTTPS
     httpOnly: true,
   },
 }));

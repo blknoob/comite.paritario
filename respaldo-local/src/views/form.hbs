@@ -1,0 +1,151 @@
+<h2 class="titulo-principal">Formulario de Comentarios del Comité Paritario</h2>
+
+<form
+  action="/enviar"
+  method="POST"
+  enctype="multipart/form-data"
+  class="formulario-comite"
+>
+
+  <div class="form-grupo">
+    <label for="nombre">Nombre y Apellido:</label>
+    <input type="text" name="nombre" id="nombre" placeholder="Tu nombre" />
+  </div>
+
+  <div class="form-grupo">
+    <label for="tipo">Tipo de Comentario:</label>
+    <select name="tipo" id="tipo" required>
+      <option value="">Seleccione una opción</option>
+      <option value="reclamo">Reclamo</option>
+      <option value="sugerencia">Sugerencia</option>
+      <option value="otro">Otro</option>
+    </select>
+  </div>
+
+  <div class="form-grupo">
+    <label for="mensaje">Mensaje:</label>
+    <textarea
+      name="mensaje"
+      id="mensaje"
+      rows="5"
+      placeholder="Escribe tu mensaje aquí..."
+      required
+    ></textarea>
+  </div>
+
+  <div class="form-grupo">
+    <label>Imágenes:</label>
+    <button type="button" class="btn-imagen" onclick="document.getElementById('foto-camara').click()">
+      📸 Tomar Foto
+    </button>
+    <button type="button" class="btn-imagen" onclick="document.getElementById('fotos-galeria').click()">
+      🖼️ Subir desde Galería
+    </button>
+
+    <!-- Inputs ocultos -->
+    <input
+      type="file"
+      id="foto-camara"
+      accept="image/*"
+      capture="environment"
+      style="display: none;"
+    />
+    <input
+      type="file"
+      id="fotos-galeria"
+      accept="image/*"
+      multiple
+      style="display: none;"
+    />
+
+    <!-- Contenedor de previews -->
+    <div id="preview-container" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;"></div>
+  </div>
+
+  <div class="form-grupo">
+    <button type="submit">Enviar comentario</button>
+  </div>
+</form>
+
+<script>
+  const fotoCamara = document.getElementById('foto-camara');
+  const fotosGaleria = document.getElementById('fotos-galeria');
+  const previewContainer = document.getElementById('preview-container');
+
+  // Lista global de archivos combinados
+  let archivosSeleccionados = [];
+
+  function actualizarPreviews() {
+    previewContainer.innerHTML = '';
+    archivosSeleccionados.forEach((file, index) => {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const previewDiv = document.createElement('div');
+        previewDiv.style.position = 'relative';
+
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.alt = 'Imagen ' + (index + 1);
+        img.style.width = '80px';
+        img.style.height = '80px';
+        img.style.objectFit = 'cover';
+        img.style.border = '1px solid #ccc';
+        img.style.borderRadius = '6px';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = '❌';
+        btn.style.position = 'absolute';
+        btn.style.top = '-25px';
+        btn.style.right = '-5px';
+        btn.style.backgroundColor = 'transparent';        
+        btn.style.color = 'white';
+        btn.style.border = 'none';
+        btn.style.cursor = 'pointer';
+        btn.style.borderRadius = '50%';
+        btn.style.width = '20px';
+        btn.style.height = '20px';
+        btn.style.fontSize = '12px';
+
+        btn.addEventListener('click', () => {
+          archivosSeleccionados.splice(index, 1);
+          actualizarPreviews();
+        });
+
+        previewDiv.appendChild(img);
+        previewDiv.appendChild(btn);
+        previewContainer.appendChild(previewDiv);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function agregarArchivos(files) {
+    archivosSeleccionados = [...archivosSeleccionados, ...files];
+    actualizarPreviews();
+  }
+
+  fotoCamara.addEventListener('change', function() {
+    agregarArchivos(Array.from(this.files));
+    this.value = ''; // limpiar para permitir repetir toma
+  });
+
+  fotosGaleria.addEventListener('change', function() {
+    agregarArchivos(Array.from(this.files));
+    this.value = ''; // limpiar para permitir más selecciones
+  });
+
+  // Antes de enviar el formulario, copiamos archivos al input final
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const dataTransfer = new DataTransfer();
+    archivosSeleccionados.forEach(file => dataTransfer.items.add(file));
+    // Creamos un input hidden múltiple
+    const inputFinal = document.createElement('input');
+    inputFinal.type = 'file';
+    inputFinal.name = 'imagenes';
+    inputFinal.multiple = true;
+    inputFinal.style.display = 'none';
+    inputFinal.files = dataTransfer.files;
+    this.appendChild(inputFinal);
+  });
+</script>
